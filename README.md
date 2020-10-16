@@ -13,4 +13,4 @@ Para poder utilizar el código se necesita que tengas instalado en tu máquina l
 Para ejecutar el código solo tienes que poner el siguiente comando:
 - python breastCancer.py
 
-y luego elegir qué modelo desea utilizar
+y luego elegir qué modelo desea utilizar con el menú.

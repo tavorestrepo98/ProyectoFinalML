@@ -41,61 +41,56 @@ clase = breastC.feature_names
 resultado = breastC.target_names
 
 # L O G I S T I C  R E G R E S S I O N
-def logistic():
+def logistic(lgSolver):
 	# Hiperparametros
 	testSize = 0.25
 	trainValSize = 0.30
-	logSolver = "liblinear"
+	logSolver = lgSolver
 
 	print("\nTest DataSet Size: ",testSize)
 	print("Train&Validation DataSet Size: ", trainValSize)
 	print("Solver: ", logSolver)
 
-	X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size=testSize)
-	#X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=trainValSize)
+	X, X_test, Y, Y_test = train_test_split(x, y, test_size=testSize)
+	X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=trainValSize)
 
 	#escalamos los datos
 	escalar = StandardScaler()
 	X_train = escalar.fit_transform(X_train)
 	X_test = escalar.transform(X_test)
-	#X_val = escalar.transform(X_val)
+	X_val = escalar.transform(X_val)
 
-	logRegressor = LogisticRegression(solver='liblinear')
+	logRegressor = LogisticRegression(solver=logSolver)
 
 	logRegressor.fit(X_train, Y_train)
 
-	y_predict = logRegressor.predict(X_test)
-	print("\n",y_predict)
+	y_testValidation = logRegressor.predict(X_val)
+	print("\n",y_testValidation)
 
-	print('\n\nPrecision: ', precision_score(Y_test, y_predict))
-	print('Accuracy; ', accuracy_score(Y_test, y_predict))
-	print('sensibility: ', recall_score(Y_test, y_predict))
-	print('puntaje f1 del modelo: ', f1_score(Y_test, y_predict))	
+	print('\n\nPrecision: ', precision_score(Y_val, y_testValidation))
+	print('Accuracy; ', accuracy_score(Y_val, y_testValidation))
+	print('sensibility: ', recall_score(Y_val, y_testValidation))
+	print('puntaje f1 del modelo: ', f1_score(Y_val, y_testValidation))	
 
-	#print("\nTest Data Set\n",Y_test)
-	#print("\n",y_predict)
-	tnts, fpts, fnts, tpts = confusion_matrix(Y_test, y_predict).ravel()
+	print("\nTest Data Set\n",Y_val)
+	print("\n",y_testValidation)
+	tnts, fpts, fnts, tpts = confusion_matrix(Y_val, y_testValidation).ravel()
 	print("\nVerdaderos Positivos: ",tpts)
 	print("Falsos Positivos: ",fpts)
 	print("Verdaderos Negativos: ",tnts)
 	print("Falsos Negativos: ",fnts)
 
 # K N E A R E S T  N E I G H B O R S
-def KNN():
+def KNN(neigh):
 	# Hiperparametros
-	testSize = 0.25
-	neighbors = 3
+	testSize = 0.2
+	neighbors = neigh
 
 	print("\nTest Size: ",testSize)
 	print("Neighbors quantity: ", neighbors)
 
 	# Divido el dataSet para prueba y testeo
 	x_train_k, x_test_k, y_train_k, y_test_k = train_test_split(x, y, test_size=testSize)
-
-	escalar = StandardScaler()
-	x_train_k = escalar.fit_transform(x_train_k)
-	x_test_k = escalar.transform(x_test_k)
-
 	print("\n\nX_train shape: ", x_train_k.shape)
 	print("y_train shape: ", y_train_k.shape)
 	print("X_test shape: ", x_test_k.shape)
@@ -110,23 +105,23 @@ def KNN():
 
 	# Obtengo las metricas obtenidas
 	print('\nPrecision: ', precision_score(y_test_k, y_pred_k))
-	print('Accuracy; ', accuracy_score(y_test_k, y_pred_k))
+	print('Accuracy: ', accuracy_score(y_test_k, y_pred_k))
 	print('sensibility: ', recall_score(y_test_k, y_pred_k))
 	print('puntaje f1 del modelo: ', f1_score(y_test_k, y_pred_k))
 
 	# Revisar la eficacia para predecir, las probabilidades de que sea 1 o 0, a mas alto el porcentaje mas posible que sea 1
-	""" print("\nTrain Data Set\n",y_train_k)
+	print("\nTrain Data Set\n",y_train_k)
 	train_predict_k = knn.predict(x_train_k)
 	print("\n",train_predict_k)
 	tntrk, fptrk, fntrk, tptrk = confusion_matrix(y_train_k, train_predict_k).ravel()
 	print("\nVerdaderos Positivos: ",tptrk)
 	print("Falsos Positivos: ",fptrk)
 	print("Verdaderos Negativos: ",tntrk)	
-	print("Falsos Negativos: ",fntrk)	 """
+	print("Falsos Negativos: ",fntrk)	
 
-	#print("\nTest Data Set\n",y_test_k)
+	print("\nTest Data Set\n",y_test_k)
 	test_predict_k = knn.predict(x_test_k)
-	#print("\n",test_predict_k)
+	print("\n",test_predict_k)
 	tntsk, fptsk, fntsk, tptsk = confusion_matrix(y_test_k, test_predict_k).ravel()
 	print("\nVerdaderos Positivos: ",tptsk)
 	print("Falsos Positivos: ",fptsk)
@@ -134,15 +129,15 @@ def KNN():
 	print("Falsos Negativos: ",fntsk)
 
 # N E U R A L  N E T W O R K S
-def neural():
+def neural(neuronasOcultas,learningRate,epocas):
 	# Hiperparametros
-	neuronasOcultas = 8
-	learningRate = 0.01
-	epocas = 50
+	neuronasOcultas = neuronasOcultas
+	learningRate = learningRate
+	epocas = epocas
 	batchSize = 50
-	validationSplit = 0.20
+	validationSplit = 0.2
 
-	x_train_n, x_test_n, y_train_n, y_test_n = train_test_split(x, y, test_size=0.25)
+	x_train_n, x_test_n, y_train_n, y_test_n = train_test_split(x, y, test_size=0.2)
 
 	print("\nEntrenamiento x: ",x_train_n.shape)
 	print("Testeo x: ",x_test_n.shape)
@@ -155,7 +150,7 @@ def neural():
 
 	scaler = StandardScaler()
 	x_train_n = scaler.fit_transform(x_train_n)
-	x_test_n = scaler.transform(x_test_n)
+	x_test_n = scaler.fit_transform(x_test_n)
 
 	print("\n",x_train_n[3])
 	print(y_train_n[3])
@@ -215,12 +210,17 @@ while ans:
     """)
     ans=input("What would you like to do? ")
     if ans=="1":
-      logistic()
+    	lgSolver = input("\nWhich Solver you want to use (liblinear, lbfgs, newton-cg, sag, saga): ")
+    	logistic(lgSolver)
     elif ans=="2":
-      KNN()
+    	neigh = input("\nHow Many Neighbors do you want to use?(Just integers): ")
+    	KNN(int(neigh))
     elif ans=="3":
-      neural()
+    	neuronasOcultas = input("\nHow Many Neurons do you want for the hidden layer?(Just integers): ")
+    	lRate = input("Which Learning Rate do you want to use?(default 0.001, floats recommended): ")
+    	eps = input("How Many Epochs do you want to handle?(tens recommended): ")
+    	neural(int(neuronasOcultas),float(lRate),int(eps))
     elif ans=="4":
-      ans = None
+    	ans = None
     else:
-       print("\n Opcion no valida")
+    	print("\n Opcion no valida")
